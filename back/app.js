@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const sauceRoute = require("./route/sauce");
 
 //connection a la base de donnée
 mongoose
@@ -13,7 +14,8 @@ mongoose
   //si elle n'est pas resolu
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
-//info sur tp
+app.use(express.json());
+app.use("/api/sauces", sauceRoute);
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -26,4 +28,5 @@ app.use((req, res, next) => {
   );
   next();
 });
+
 module.exports = app;
