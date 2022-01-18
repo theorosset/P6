@@ -1,15 +1,11 @@
 const express = require("express");
 const app = express();
+const path = require("path");
 const userRoute = require("./route/user");
 const sauceRoute = require("./route/sauce");
 require("./models/dbConfig");
 
 app.use(express.json());
-
-//routes
-app.use("/api/sauces", sauceRoute);
-app.use("/api/auth", userRoute);
-
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -22,5 +18,9 @@ app.use((req, res, next) => {
   );
   next();
 });
+//routes
+app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/api/sauces", sauceRoute);
+app.use("/api/auth", userRoute);
 
 module.exports = app;

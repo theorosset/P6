@@ -1,6 +1,5 @@
 const route = require("express").Router();
 
-const ctrlAuth = require("../controllers/auth");
 const userCtrl = require("../controllers/user");
 
 //auth
