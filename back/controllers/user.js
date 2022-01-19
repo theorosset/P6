@@ -19,9 +19,10 @@ module.exports.signup = async (req, res) => {
 //connection
 exports.login = async function (req, res, next) {
   const user = await UserModel.findOne({ email: req.body.email });
-  console.log(user);
+
   if (user) {
     const auth = await bcrypt.compare(req.body.password, user.password);
+    console.log(req.body.password, user.password);
     if (auth) {
       res.status(200).json({
         userId: user._id,

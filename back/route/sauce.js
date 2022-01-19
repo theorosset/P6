@@ -7,8 +7,7 @@ route.get("/", auth, ctrl.allSauces);
 route.get("/:id", auth, ctrl.oneSauce);
 route.post("/", auth, multer, ctrl.createSauce);
 route.put("/:id", auth, multer, ctrl.updateSauce);
-route.delete("/:id", ctrl.deleteSauce);
-
-route.post("/:id/like");
+route.delete("/:id", auth, ctrl.deleteSauce);
+route.post("/:id/like", ctrl.likeSauce);
 
 module.exports = route;
