@@ -1,6 +1,7 @@
 const Sauces = require("../models/sauce");
 const fs = require("fs");
 const sauce = require("../models/sauce");
+
 //recuperation d'un tableau qui contient toutes les sauces
 exports.allSauces = (req, res, next) => {
   Sauces.find((err, sauces) => {
@@ -70,14 +71,26 @@ exports.createSauce = async (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
-  });
-  try {
-    const sauce = await Sauce.save();
-
-    return res.status(201).json(sauce);
-  } catch (err) {
-    return res.status(400).json("blopblop");
-  }
+  })
+    .then(() => {
+      res.status(201).json({ message: "Sauce créer" });
+    })
+    .catch((err) => {
+      return res.status(400).json("blopblop");
+    });
 };
 
-exports.likeSauce = (req, res, next) => {};
+exports.likeDislikeSauce = (req, res, next) => {
+  const userId = req.params.userId;
+  //si le like est = a 1 on incrémente les like et on ajoute l'id du user dans userLiked
+  if (req.body.like === 1) {
+    Sauces.updateOne(
+      { _id: req.params.id },
+      { $inc: { likes: +1 }, $push: { usersLiked: userId } }
+    )
+      .then(() => {
+        return res.status(200).json({ message: "Sauce aimer" });
+      })
+      .catch((err) => res.status(400).json({ err: "7" }));
+  }
+};
