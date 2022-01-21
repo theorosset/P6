@@ -1,8 +1,8 @@
 const express = require("express");
-const app = express();
 const path = require("path");
 const userRoute = require("./route/user");
 const sauceRoute = require("./route/sauce");
+const app = express();
 
 //connection a mangodb
 require("./DBconfig/dbConfig");
@@ -26,6 +26,7 @@ app.use((req, res, next) => {
 
 // route pour recuperer les image depuis un dossier
 app.use("/images", express.static(path.join(__dirname, "images")));
+
 //route globale des sauces
 app.use("/api/sauces", sauceRoute);
 //route globale pour la connexion
