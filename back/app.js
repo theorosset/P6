@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const userRoute = require("./route/user");
 const sauceRoute = require("./route/sauce");
+
 const app = express();
 
 //connection a mangodb
