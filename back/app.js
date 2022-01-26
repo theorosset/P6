@@ -30,6 +30,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 //route globale des sauces
 app.use("/api/sauces", sauceRoute);
+
 //route globale pour la connexion
 app.use("/api/auth", userRoute);
 

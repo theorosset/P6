@@ -10,19 +10,19 @@ module.exports.signup = async (req, res) => {
   try {
     //on passe l'email et le password a notre usermodel
     const user = await UserModel.create({ email, password });
-    res.status(201).json({ user: user._id });
+    return res.status(201).json({ user: user._id });
   } catch (err) {
-    res.status(200).json({ err });
+    return res.status(401).json({ err });
   }
 };
 
-//connection
+//connexion
 exports.login = async function (req, res, next) {
   const user = await UserModel.findOne({ email: req.body.email });
 
   if (user) {
     const auth = await bcrypt.compare(req.body.password, user.password);
-    console.log(req.body.password, user.password);
+
     if (auth) {
       res.status(200).json({
         userId: user._id,

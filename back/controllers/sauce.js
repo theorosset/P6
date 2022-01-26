@@ -41,7 +41,7 @@ exports.deleteSauce = (req, res, next) => {
     });
 };
 
-//modification de la sauce
+//modification d'une sauce
 exports.updateSauce = (req, res, next) => {
   //si l'utilisateur change l'image
   const sauceObject = req.file
@@ -61,7 +61,7 @@ exports.updateSauce = (req, res, next) => {
     .catch((err) => res.status(400).json({ err }));
 };
 
-//creation
+//creation d'une sauce
 exports.createSauce = async (req, res, next) => {
   const SauceObj = JSON.parse(req.body.sauce);
   console.log(req.body);
@@ -75,13 +75,14 @@ exports.createSauce = async (req, res, next) => {
       res.status(201).json({ message: "Sauce créer" });
     })
     .catch((err) => {
-      return res.status(400).json("blopblop");
+      return res.status(400).json({ err });
     });
 };
 
+//possibilité de like ou dislike
 exports.likeDislikeSauce = (req, res, next) => {
   const userId = req.body.userId;
-
+  //si l'utilisateur like la sauce
   if (req.body.like === 1) {
     Sauces.updateOne(
       { _id: req.params.id },
@@ -92,6 +93,7 @@ exports.likeDislikeSauce = (req, res, next) => {
     )
       .then(() => res.status(200).json({ message: "Like" }))
       .catch((err) => res.status(400).json({ err }));
+    //si l'utilisateur dislike la sauce
   } else if (req.body.like === -1) {
     Sauces.updateOne(
       { _id: req.params.id },
@@ -102,6 +104,7 @@ exports.likeDislikeSauce = (req, res, next) => {
     )
       .then(() => res.status(200).json({ message: "Dislike" }))
       .catch((err) => res.status(400).json({ err }));
+    //sinon l'utilisateur annule son like
   } else {
     Sauces.findOne({ _id: req.params.id })
       .then((sauce) => {
@@ -114,6 +117,7 @@ exports.likeDislikeSauce = (req, res, next) => {
               res.status(200).json({ message: "Like retiré" });
             })
             .catch((err) => res.status(400).json({ err }));
+          // si l'utilisateur enlêve son dislike
         } else if (sauce.usersDisliked.includes(userId)) {
           Sauces.updateOne(
             { _id: req.params.id },
