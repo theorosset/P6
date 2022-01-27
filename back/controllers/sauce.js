@@ -2,7 +2,7 @@ const Sauces = require("../models/sauce");
 const fs = require("fs");
 
 //recuperation d'un tableau qui contient toutes les sauces
-exports.allSauces = (req, res, next) => {
+allSauces = (req, res, next) => {
   Sauces.find((err, sauces) => {
     if (!err) {
       res.status(200).json(sauces);
@@ -13,7 +13,7 @@ exports.allSauces = (req, res, next) => {
 };
 
 //recuperation d'une seul sauce avec son _id
-exports.oneSauce = (req, res, next) => {
+oneSauce = (req, res, next) => {
   Sauces.findById({ _id: req.params.id })
     .then((sauce) => {
       return res.status(200).json(sauce);
@@ -22,7 +22,7 @@ exports.oneSauce = (req, res, next) => {
 };
 
 //suppression de la sauce
-exports.deleteSauce = (req, res, next) => {
+deleteSauce = (req, res, next) => {
   Sauces.findOne({ _id: req.params.id })
     .then((sauce) => {
       const filename = sauce.imageUrl.split("/images/")[1];
@@ -42,7 +42,7 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 //modification d'une sauce
-exports.updateSauce = (req, res, next) => {
+updateSauce = (req, res, next) => {
   //si l'utilisateur change l'image
   const sauceObject = req.file
     ? {
@@ -62,10 +62,10 @@ exports.updateSauce = (req, res, next) => {
 };
 
 //creation d'une sauce
-exports.createSauce = async (req, res, next) => {
+createSauce = async (req, res, next) => {
   const SauceObj = JSON.parse(req.body.sauce);
-  console.log(req.body);
-  const Sauce = Sauces.create({
+
+  Sauces.create({
     ...SauceObj,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
@@ -80,8 +80,9 @@ exports.createSauce = async (req, res, next) => {
 };
 
 //possibilité de like ou dislike
-exports.likeDislikeSauce = (req, res, next) => {
-  const userId = req.body.userId;
+likeDislikeSauce = (req, res, next) => {
+  const userId = req.auth.userId;
+
   //si l'utilisateur like la sauce
   if (req.body.like === 1) {
     Sauces.updateOne(
@@ -134,4 +135,13 @@ exports.likeDislikeSauce = (req, res, next) => {
       })
       .catch((err) => res.status(400).json({ err }));
   }
+};
+
+module.exports = {
+  allSauces,
+  oneSauce,
+  deleteSauce,
+  updateSauce,
+  createSauce,
+  likeDislikeSauce,
 };

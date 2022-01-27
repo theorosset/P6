@@ -2,11 +2,15 @@ const express = require("express");
 const path = require("path");
 const userRoute = require("./route/user");
 const sauceRoute = require("./route/sauce");
+const helmet = require("helmet");
 
 const app = express();
 
 //connection a mangodb
 require("./DBconfig/dbConfig");
+
+//création d'entête sécuriser
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
 //recuperation des requete qui on un content-type json
 app.use(express.json());
@@ -27,10 +31,8 @@ app.use((req, res, next) => {
 
 // route pour recuperer les image depuis un dossier
 app.use("/images", express.static(path.join(__dirname, "images")));
-
 //route globale des sauces
 app.use("/api/sauces", sauceRoute);
-
 //route globale pour la connexion
 app.use("/api/auth", userRoute);
 
