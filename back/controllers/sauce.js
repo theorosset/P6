@@ -25,16 +25,20 @@ oneSauce = (req, res, next) => {
 deleteSauce = (req, res, next) => {
   Sauces.findOne({ _id: req.params.id })
     .then((sauce) => {
-      const filename = sauce.imageUrl.split("/images/")[1];
-      fs.unlink(`images/${filename}`, () => {
-        Sauces.findByIdAndRemove({ _id: req.params.id }, (err) => {
-          if (!err) {
-            res.status(200).json({ message: "Sauce supprimer" });
-          } else {
-            console.log(err + "delete");
-          }
+      if (sauce.userId !== req.auth.userId) {
+        return res.status(401).json({ message: "ce n'est pas votre sauce !" });
+      } else {
+        const filename = sauce.imageUrl.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => {
+          Sauces.findByIdAndRemove({ _id: req.params.id }, (err) => {
+            if (!err) {
+              res.status(200).json({ message: "Sauce supprimer" });
+            } else {
+              console.log(err + "delete");
+            }
+          });
         });
-      });
+      }
     })
     .catch((err) => {
       res.status(400).json({ err });
