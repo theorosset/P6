@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 //inscription
-signup = async (req, res) => {
+const signup = async (req, res) => {
   //destructuration req.body.email, req.body.password
   const { email, password } = req.body;
 
@@ -17,7 +17,7 @@ signup = async (req, res) => {
 };
 
 //connexion
-login = async function (req, res, next) {
+const login = async function (req, res, next) {
   //recherche de l'email dans la base de donnée correspondant a celui de la requête
   const user = await UserModel.findOne({ email: req.body.email });
   //si la recherche est validé

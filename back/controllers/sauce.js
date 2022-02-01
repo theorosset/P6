@@ -2,18 +2,18 @@ const Sauces = require("../models/sauce");
 const fs = require("fs");
 
 //recuperation d'un tableau qui contient toutes les sauces
-allSauces = (req, res, next) => {
+const allSauces = (req, res, next) => {
   Sauces.find((err, sauces) => {
     if (!err) {
       res.status(200).json(sauces);
     } else {
-      res.status(400).json({ err });
+      res.status(500).json({ err });
     }
   });
 };
 
 //recuperation d'une seul sauce avec son _id
-oneSauce = (req, res, next) => {
+const oneSauce = (req, res, next) => {
   Sauces.findById({ _id: req.params.id })
     .then((sauce) => {
       return res.status(200).json(sauce);
@@ -22,12 +22,12 @@ oneSauce = (req, res, next) => {
 };
 
 //suppression de la sauce
-deleteSauce = (req, res, next) => {
+const deleteSauce = (req, res, next) => {
   Sauces.findOne({ _id: req.params.id })
     .then((sauce) => {
       //si l'userId de la sauce est différent de celui authentifier on retourne une erreur
       if (sauce.userId !== req.auth.userId) {
-        return res.status(401).json({ message: "ce n'est pas votre sauce !" });
+        return res.status(403).json({ message: "ce n'est pas votre sauce !" });
       } else {
         //séléction de l'image a supprimer
         const filename = sauce.imageUrl.split("/images/")[1];
@@ -49,7 +49,7 @@ deleteSauce = (req, res, next) => {
 };
 
 //modification d'une sauce
-updateSauce = (req, res, next) => {
+const updateSauce = (req, res, next) => {
   //si l'utilisateur change l'image
   const sauceObject = req.file
     ? {
@@ -70,11 +70,16 @@ updateSauce = (req, res, next) => {
 };
 
 //creation d'une sauce
-createSauce = async (req, res, next) => {
+const createSauce = async (req, res, next) => {
   const SauceObj = JSON.parse(req.body.sauce);
   //création de la sauce dans la DB
   Sauces.create({
     ...SauceObj,
+    likes: 0,
+    dislikes: 0,
+    usersLiked: [],
+    usersDisliked: [],
+
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
@@ -88,7 +93,7 @@ createSauce = async (req, res, next) => {
 };
 
 //possibilité de like ou dislike
-likeDislikeSauce = (req, res, next) => {
+const likeDislikeSauce = (req, res, next) => {
   const userId = req.auth.userId;
 
   //si l'utilisateur like la sauce
