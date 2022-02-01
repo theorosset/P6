@@ -25,10 +25,13 @@ oneSauce = (req, res, next) => {
 deleteSauce = (req, res, next) => {
   Sauces.findOne({ _id: req.params.id })
     .then((sauce) => {
+      //si l'userId de la sauce est différent de celui authentifier on retourne une erreur
       if (sauce.userId !== req.auth.userId) {
         return res.status(401).json({ message: "ce n'est pas votre sauce !" });
       } else {
+        //séléction de l'image a supprimer
         const filename = sauce.imageUrl.split("/images/")[1];
+        //suppression du fichier sur notre serveur et suppression de la sauce dans la DB
         fs.unlink(`images/${filename}`, () => {
           Sauces.findByIdAndRemove({ _id: req.params.id }, (err) => {
             if (!err) {
@@ -57,6 +60,7 @@ updateSauce = (req, res, next) => {
       }
     : //si l'utilisateur ne change pas l'image
       { ...req.body };
+
   Sauces.updateOne(
     { _id: req.params.id },
     { ...sauceObject, _id: req.params.id }
@@ -68,7 +72,7 @@ updateSauce = (req, res, next) => {
 //creation d'une sauce
 createSauce = async (req, res, next) => {
   const SauceObj = JSON.parse(req.body.sauce);
-
+  //création de la sauce dans la DB
   Sauces.create({
     ...SauceObj,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
